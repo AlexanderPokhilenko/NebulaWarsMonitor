@@ -27,7 +27,7 @@ function AddRow() {
         }
         $("<td>").append(newInput).appendTo(newRow);
     });
-    $("<td>").append($("<button>").addClass("btn btn-danger").text("Видалити").click(function () {
+    $("<td>").append($("<button>").addClass("btn btn-danger removeButton").text("Видалити").click(function () {
         var jqTr = $(this).closest("tr");
         if (jqTr.hasClass("bg-danger")) {
             jqTr.removeClass("bg-danger");

@@ -52,7 +52,7 @@
                     }
                     @if (!Model.IsReadOnly)
                     {
-                        <td><button type="button" class="btn btn-danger">Видалити</button></td>
+                        <td><button type="button" class="btn btn-danger removeButton">Видалити</button></td>
                     }
                 </tr>
             }
@@ -60,8 +60,8 @@
         @if (!Model.IsReadOnly)
         {
             <div class="mb-2">
-                <button type="button" onclick="AddRow()">Додати</button>
-                <button type="button" onclick="Save()"><strong>Зберегти</strong></button>
+                <button id="add" type="button" onclick="AddRow()">Додати</button>
+                <button id="save" type="button" onclick="Save()"><strong>Зберегти</strong></button>
             </div>
         }
     </div>

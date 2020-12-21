@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NebulaWarsMonitor", "NebulaWarsMonitor\NebulaWarsMonitor.csproj", "{492CEEB1-0FB2-4A2C-AE77-BA3426B55F3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NebulaWarsMonitor", "NebulaWarsMonitor\NebulaWarsMonitor.csproj", "{492CEEB1-0FB2-4A2C-AE77-BA3426B55F3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlowSelenium", "SpecFlowSelenium\SpecFlowSelenium.csproj", "{4FD8584F-6B40-4237-BF03-3A8A184EF5F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{492CEEB1-0FB2-4A2C-AE77-BA3426B55F3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{492CEEB1-0FB2-4A2C-AE77-BA3426B55F3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{492CEEB1-0FB2-4A2C-AE77-BA3426B55F3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FD8584F-6B40-4237-BF03-3A8A184EF5F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FD8584F-6B40-4237-BF03-3A8A184EF5F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FD8584F-6B40-4237-BF03-3A8A184EF5F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FD8584F-6B40-4237-BF03-3A8A184EF5F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
