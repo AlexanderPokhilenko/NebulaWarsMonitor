@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Log In";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Монітор гри "Nebula Wars"</h1>
+    <h2>Введіть пароль адміністратора</h2>
+    <form asp-action="LogIn" method="post" class="my-4" asp-antiforgery="true">
+        <input id="password" placeholder="Пароль" type="password" name="password">
+        <input id="send" type="submit">
+    </form>
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <p class="alert-danger">@ViewData["ErrorMessage"]</p>
+    }
+</div>

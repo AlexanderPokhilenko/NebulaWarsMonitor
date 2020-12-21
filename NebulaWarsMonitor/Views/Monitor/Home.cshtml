@@ -1,0 +1,227 @@
+﻿@model PropertiesDataModel
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<style>
+    table td {
+        position: relative;
+    }
+
+    table td input, textarea {
+        position: absolute;
+        display: block;
+        top: 0;
+        left: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        border: none;
+        padding: 10px;
+        box-sizing: border-box;
+        background: transparent;
+    }
+
+    table td textarea {
+        resize: none;
+    }
+
+    .btn-danger {
+        border-color: white;
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">Монітор гри "Nebula Wars"</h1>
+    <h2>Панель адміністратора</h2>
+    <form asp-action="LogOut" method="get">
+        <input type="submit" value="Вийти з акаунта" />
+    </form>
+    <h4>Типи сутностей</h4>
+    <form asp-action="Home" method="get">
+        @foreach (var entity in Model.EntitiesNames)
+        {
+        <input type="submit" name="type" value="@entity" />
+        }
+    </form>
+    <h1 class="my-4">Таблиця @Model.TableName</h1>
+    <div class="table-responsive">
+        <table id="mainTable" class="table table-hover">
+            <tr>
+                @foreach (var colName in Model.Properties)
+                {
+                    <th>@colName</th>
+                }
+                @if (!Model.IsReadOnly)
+                {
+                    <th>Del</th>
+                }
+            </tr>
+            @foreach (var (rowKey, rowValue) in Model.Rows)
+            {
+                <tr @foreach (var (key, value) in rowKey) { @Html.Raw($"data-{key}='{value}' ")   }>
+                    @foreach (var (value, property) in rowValue.Zip(Model.Properties, (c, p) => (c, p)))
+                    {
+                        <td height="70">
+                            @if (Model.IsReadOnly)
+                            {
+                                <textarea name="@property" readonly="readonly">@(Model.ForeignKeys.TryGetValue(property, out var dict) && value != null ? dict[value.ToString()] : value?.ToString() ?? "NULL")</textarea>
+                            }
+                            else
+                            {
+                                <input name="@property" value="@(value?.ToString() ?? "NULL")" autocomplete="off" @(Model.ForeignKeys.ContainsKey(property) ? $"list={property}-fk-list" : "")/>
+                            }
+                        </td>
+                    }
+                    @if (!Model.IsReadOnly)
+                    {
+                        <td><button type="button" class="btn btn-danger">Видалити</button></td>
+                    }
+                </tr>
+            }
+        </table>
+        @if (!Model.IsReadOnly)
+        {
+            <div class="mb-2">
+                <button type="button" onclick="AddRow()">Додати</button>
+                <button type="button" onclick="Save()"><strong>Зберегти</strong></button>
+            </div>
+        }
+    </div>
+    @if (!Model.IsReadOnly)
+    {
+        <div id="data-lists">
+            @foreach (var (key, fks) in Model.ForeignKeys)
+            {
+                <datalist id="@(key)-fk-list">
+                    @foreach (var (pk, text) in fks)
+                    {
+                        <option value="@pk">@text</option>
+                    }
+                </datalist>
+            }
+        </div>
+    }
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(!Model.NeedBack ? "disabled" : "")">
+                <a class="page-link" href="?type=@Model.EntityName&page=0" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+            <li class="page-item @(!Model.NeedBack ? "disabled" : "")">
+                <a class="page-link" href="?type=@Model.EntityName&page=@Model.PrevPage" aria-label="Previous">
+                    <span aria-hidden="true">&lsaquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+            <li class="page-item @(!Model.NeedNext ? "disabled" : "")">
+                <a class="page-link" href="?type=@Model.EntityName&page=@Model.NextPage" aria-label="Next">
+                    <span aria-hidden="true">&rsaquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+            <li class="page-item @(!Model.NeedNext ? "disabled" : "")">
+                <a class="page-link" href="?type=@Model.EntityName&page=@Model.LastPage" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+@if (!Model.IsReadOnly)
+{
+<script>
+    var properties = @Json.Serialize(Model.Properties);
+
+    window.onload = function () {
+        $("td input").change(function() {
+            $(this).closest("tr").addClass("bg-warning");
+        });
+        $("td button").click(function () {
+            var jqTr = $(this).closest("tr");
+            if (jqTr.hasClass("bg-danger")) {
+                jqTr.removeClass("bg-danger");
+                this.textContent = "Видалити";
+            } else {
+                jqTr.addClass("bg-danger");
+                this.textContent = "Відмінити";
+            }
+        });
+    };
+
+    function AddRow() {
+        var lastRow = $("#mainTable").find("tr").last();
+        var newRow = $("<tr>").addClass("bg-success");
+        properties.forEach(function (property) {
+            var newInput = $("<input>").attr("autocomplete", "off").attr("name", property);
+            var datalistId = property + "-fk-list";
+            if ($("#data-lists").find("datalist#" + datalistId).length) {
+                newInput.attr("list", datalistId);
+            }
+            $("<td>").append(newInput).appendTo(newRow);
+        });
+        $("<td>").append($("<button>").addClass("btn btn-danger").text("Видалити").click(function () {
+            var jqTr = $(this).closest("tr");
+            if (jqTr.hasClass("bg-danger")) {
+                jqTr.removeClass("bg-danger");
+                this.textContent = "Видалити";
+            } else {
+                if (jqTr.find("input").filter(function() { return $(this).val(); }).length > 0) {
+                    jqTr.addClass("bg-danger");
+                    this.textContent = "Відмінити";
+                } else {
+                    jqTr.remove();
+                }
+            }
+        })).appendTo(newRow);
+        newRow.insertAfter(lastRow);
+    }
+
+    function Save() {
+        var changedRows = [];
+        var createdRows = [];
+        var removedRows = [];
+
+        fillArray(changedRows, "tr.bg-warning", true);
+        fillArray(createdRows, "tr.bg-success:not(.bg-danger)", false);
+        $("tr.bg-danger").each(function (index, element) {
+            var jqTr = $(element);
+            var data = { oldPK: jqTr.data() };
+            if (!jQuery.isEmptyObject(data.oldPK)) {
+                removedRows.push(data);
+            }
+        });
+
+        function fillArray(arr, trSelector, needOld) {
+            $(trSelector).each(function (index, element) {
+                var jqTr = $(element);
+                var data = {};
+                if (needOld) data.oldPK = jqTr.data();
+                data.newVal = {};
+                jqTr.find("input").each(function(ind, inp) {
+                    var jqInp = $(inp);
+                    data.newVal[jqInp.attr("name")] = jqInp.val();
+                });
+                arr.push(data);
+            });
+        }
+
+        $.ajax({
+            type: "post",
+            url: "/Monitor/SaveChanges",
+            data: {rows: JSON.stringify({ created: createdRows, changed: changedRows, removed: removedRows })},
+            success: function() {
+                document.location.reload();
+            },
+            error: function (jqXHR) {
+                alert(jqXHR.responseText);
+            }
+        });
+    }
+</script>
+}
