@@ -4,33 +4,9 @@
     ViewData["Title"] = "Home";
 }
 
-<style>
-    table td {
-        position: relative;
-    }
-
-    table td input, textarea {
-        position: absolute;
-        display: block;
-        top: 0;
-        left: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-        border: none;
-        padding: 10px;
-        box-sizing: border-box;
-        background: transparent;
-    }
-
-    table td textarea {
-        resize: none;
-    }
-
-    .btn-danger {
-        border-color: white;
-    }
-</style>
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/home.css")"/>
+}
 
 <div class="text-center">
     <h1 class="display-4">Монітор гри "Nebula Wars"</h1>
